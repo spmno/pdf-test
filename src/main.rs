@@ -4,6 +4,8 @@ use std::path::Path;
 use llm_sdk::LlmSdk;
 use llm_sdk::api::chat_completion::{ChatCompletionRequestBuilder, ChatCompletionMessage, UserMessage, SystemMessage};
 
+use std::time::{Duration, Instant};
+
 #[tokio::main]
 async fn main() {
     let file = "test.pdf";
@@ -28,13 +30,14 @@ async fn test_llm_result(text: &str) {
         }),
         ChatCompletionMessage::User(UserMessage {
             //content: "保单的生效区间是什么？".to_string(),
-            content: "保单的赔付项目是什么？".to_string(),
+            content: "保单的赔付项目是什么？用json数据格式输出。".to_string(),
             //content: "保险公司电话是多少？".to_string(),
             //content: "保障内容是什么？".to_string(),
         }),
     ])
     .build()
     .unwrap();
+    let now = Instant::now();
     let res = SDK.chat_completion(&req).await;
     match res {
         Ok(res) => {
@@ -45,6 +48,7 @@ async fn test_llm_result(text: &str) {
             println!("internal error: {:?}", err);
         }
     }
+    println!("{}", now.elapsed().as_secs());
 
 }
 
